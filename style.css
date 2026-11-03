@@ -1,0 +1,118 @@
+/* Custom Enhancements for TravelThai */
+
+body {
+    font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+h1, h2, h3, h4, .font-heading {
+    font-family: 'Kanit', sans-serif;
+}
+
+/* Category Pill Styling */
+.cat-pill {
+    background-color: #ffffff;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+.dark .cat-pill {
+    background-color: #0f172a;
+    color: #94a3b8;
+    border-color: #1e293b;
+}
+
+.cat-pill:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.dark .cat-pill:hover {
+    background-color: #1e293b;
+    color: #f8fafc;
+}
+
+.cat-pill.active {
+    background-color: #0284c7;
+    color: #ffffff !important;
+    border-color: #0284c7;
+    box-shadow: 0 4px 14px -2px rgba(2, 132, 199, 0.4);
+}
+
+.dark .cat-pill.active {
+    background-color: #0284c7;
+    color: #ffffff !important;
+    border-color: #0284c7;
+}
+
+/* Modal animation */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Card hover animation */
+.travel-card {
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.travel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+.dark .travel-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* Print Stylesheet for Budget export */
+@media print {
+    header, footer, #destinations, #itinerary, #weather, #reviews, #culture, #ai-concept, #toast-container, #back-to-top {
+        display: none !important;
+    }
+    #calculator {
+        background: none !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+    #calculator * {
+        color: #000000 !important;
+    }
+}

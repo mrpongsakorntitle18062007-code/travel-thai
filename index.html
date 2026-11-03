@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelThai - เที่ยวทั่วไทย สัมผัสมนต์เสน่ห์แดนสยาม</title>
+    <!-- Google Fonts: Prompt & Kanit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN with Dark Mode support -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                        heading: ['Kanit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            accent: '#f59e0b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-gradient-to-r from-sky-700 via-teal-700 to-emerald-700 text-white text-xs py-2 px-4 text-center font-medium shadow-inner flex items-center justify-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+        <span>🇹🇭 โปรเจกต์เว็บไซต์เพื่อการศึกษา: ออกแบบและพัฒนาด้วย Generative AI ครบวงจร 100%</span>
+    </div>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-600 to-emerald-400 flex items-center justify-center text-white shadow-md shadow-sky-500/25 group-hover:scale-105 transition-transform">
+                    <i data-lucide="compass" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <span class="font-heading text-2xl font-extrabold bg-gradient-to-r from-sky-600 to-teal-500 dark:from-sky-400 dark:to-teal-300 bg-clip-text text-transparent">TravelThai</span>
+                    <span class="block text-[11px] text-slate-400 font-medium">คู่มือท่องเที่ยวไทยอัจฉริยะ</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden lg:flex items-center gap-6 font-medium text-slate-600 dark:text-slate-300 text-sm">
+                <a href="#destinations" class="hover:text-sky-600 dark:hover:text-sky-400 transition">สถานที่ท่องเที่ยว</a>
+                <a href="#itinerary" class="hover:text-sky-600 dark:hover:text-sky-400 transition flex items-center gap-1">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500"></i>
+                    <span>จัดทริปด้วย AI</span>
+                </a>
+                <a href="#calculator" class="hover:text-sky-600 dark:hover:text-sky-400 transition">คำนวณงบประมาณ</a>
+                <a href="#weather" class="hover:text-sky-600 dark:hover:text-sky-400 transition">สภาพอากาศ</a>
+                <a href="#reviews" class="hover:text-sky-600 dark:hover:text-sky-400 transition">รีวิวจากนักเที่ยว</a>
+                <a href="#culture" class="hover:text-sky-600 dark:hover:text-sky-400 transition">ข้อควรรู้</a>
+                <a href="#ai-concept" class="hover:text-sky-600 dark:hover:text-sky-400 transition text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 px-3 py-1 rounded-full border border-sky-100 dark:border-sky-800 text-xs font-semibold">
+                    เบื้องหลัง AI
+                </a>
+            </nav>
+
+            <!-- Actions (Dark Mode, Bookmarks, Mobile Toggle) -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Theme Toggle -->
+                <button onclick="toggleDarkMode()" title="เปลี่ยนโหมดกลางคืน/กลางวัน" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i id="theme-icon" data-lucide="moon" class="w-5 h-5"></i>
+                </button>
+
+                <!-- Bookmark Button -->
+                <button id="bookmark-btn" onclick="openFavoritesModal()" title="สถานที่ที่บันทึกไว้" class="relative p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 transition">
+                    <i data-lucide="heart" class="w-5 h-5 text-rose-500"></i>
+                    <span id="fav-badge" class="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center hidden animate-bounce">0</span>
+                </button>
+
+                <!-- Contact Button -->
+                <button onclick="openContactModal()" class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs sm:text-sm shadow-md shadow-sky-600/25 transition">
+                    <i data-lucide="mail" class="w-4 h-4"></i>
+                    <span>ติดต่อเรา</span>
+                </button>
+
+                <!-- Mobile Menu Toggle -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-4 space-y-3 font-medium text-slate-600 dark:text-slate-300 text-sm">
+            <a href="#destinations" onclick="toggleMobileMenu()" class="block py-2 hover:text-sky-600">จุดหมายยอดนิยม</a>
+            <a href="#itinerary" onclick="toggleMobileMenu()" class="block py-2 text-amber-500 font-semibold">จัดทริปอัจฉริยะด้วย AI</a>
+            <a href="#calculator" onclick="toggleMobileMenu()" class="block py-2 hover:text-sky-600">คำนวณงบเที่ยว</a>
+            <a href="#weather" onclick="toggleMobileMenu()" class="block py-2 hover:text-sky-600">สภาพอากาศทั่วไทย</a>
+            <a href="#reviews" onclick="toggleMobileMenu()" class="block py-2 hover:text-sky-600">รีวิวจากนักเที่ยว</a>
+            <a href="#culture" onclick="toggleMobileMenu()" class="block py-2 hover:text-sky-600">วัฒนธรรม & ข้อควรรู้</a>
+            <a href="#ai-concept" onclick="toggleMobileMenu()" class="block py-2 text-sky-600 font-semibold">เบื้องหลังการสร้างด้วย AI</a>
+            <button onclick="openContactModal(); toggleMobileMenu();" class="w-full mt-2 py-2.5 bg-sky-600 text-white rounded-xl text-center font-medium">ส่งข้อความติดต่อ</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white py-24 sm:py-32 overflow-hidden">
+        <div class="absolute inset-0 opacity-35 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1528181304800-259b08848526?auto=format&fit=crop&w=2000&q=80');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
+
+        <div class="relative max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sky-300 text-xs sm:text-sm font-medium">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                <span>แพลตฟอร์มท่องเที่ยวไทยเวอร์ชันสมบูรณ์ 2026 (AI Complete Edition)</span>
+            </div>
+            
+            <h1 class="font-heading text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+                เที่ยวไทยให้ลึกซึ้ง <br>
+                <span class="bg-gradient-to-r from-sky-400 via-teal-300 to-amber-300 bg-clip-text text-transparent">วางแผนง่าย ครบทุกพิกัด</span>
+            </h1>
+            
+            <p class="max-w-2xl mx-auto text-slate-300 text-base sm:text-lg leading-relaxed">
+                สัมผัสมนต์เสน่ห์ขุนเขา หาดทรายมรกต วัฒนธรรมล้ำค่า พร้อมระบบสร้างแผนการเดินทางอัตโนมัติ คำนวณงบประมาณ และเช็กสภาพอากาศในที่เดียว
+            </p>
+
+            <!-- Search and Filter Bar -->
+            <div class="max-w-3xl mx-auto pt-4">
+                <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-2.5 rounded-2xl shadow-2xl flex flex-col sm:flex-row items-center gap-2 text-slate-800 dark:text-slate-100 border border-white/40 dark:border-slate-700">
+                    <div class="flex items-center gap-3 px-3 flex-1 w-full">
+                        <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+                        <input id="search-input" type="text" placeholder="ค้นหาชื่อสถานที่ หรือ จังหวัด เช่น เชียงใหม่, ภูกระดึง, อยุธยา..." 
+                               class="w-full bg-transparent border-none focus:outline-none text-slate-800 dark:text-slate-100 placeholder-slate-400 text-sm sm:text-base py-2">
+                    </div>
+                    <!-- Quick Region Dropdown in Search -->
+                    <select id="quick-region-filter" onchange="applyQuickRegion(this.value)" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs rounded-xl px-3 py-3 border-none focus:outline-none cursor-pointer">
+                        <option value="all">ทุกภูมิภาค</option>
+                        <option value="north">ภาคเหนือ</option>
+                        <option value="south">ภาคใต้</option>
+                        <option value="central">ภาคกลาง</option>
+                        <option value="northeast">ภาคอีสาน</option>
+                        <option value="east">ภาคตะวันออก</option>
+                    </select>
+                    <button onclick="applySearch()" class="w-full sm:w-auto px-7 py-3 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold text-sm shadow-md transition flex items-center justify-center gap-2">
+                        <span>ค้นหา</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fast Stats -->
+            <div class="pt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 text-amber-400 mb-1">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i>
+                        <span class="font-heading text-2xl font-bold">16+</span>
+                    </div>
+                    <span class="text-xs text-slate-300 font-medium">จุดหมายปลายทางคัดสรร</span>
+                </div>
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 text-sky-400 mb-1">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                        <span class="font-heading text-2xl font-bold">AI Gen</span>
+                    </div>
+                    <span class="text-xs text-slate-300 font-medium">ระบบจัดทริปอัตโนมัติ</span>
+                </div>
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 text-emerald-400 mb-1">
+                        <i data-lucide="cloud-sun" class="w-4 h-4"></i>
+                        <span class="font-heading text-2xl font-bold">Live</span>
+                    </div>
+                    <span class="text-xs text-slate-300 font-medium">จำลองสภาพอากาศจริง</span>
+                </div>
+                <div class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 text-teal-400 mb-1">
+                        <i data-lucide="badge-percent" class="w-4 h-4"></i>
+                        <span class="font-heading text-2xl font-bold">100%</span>
+                    </div>
+                    <span class="text-xs text-slate-300 font-medium">คำนวณงบประมาณแม่นยำ</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full space-y-24">
+
+        <!-- 1. Destinations Section -->
+        <section id="destinations" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div>
+                    <div class="flex items-center gap-2 text-sky-600 dark:text-sky-400 font-semibold text-xs uppercase tracking-wider mb-1">
+                        <i data-lucide="compass" class="w-4 h-4"></i>
+                        <span>Explore Destinations</span>
+                    </div>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">
+                        จุดหมายปลายทางยอดนิยมทั่วไทย
+                    </h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">คัดเลือกสถานที่ท่องเที่ยวที่มีเอกลักษณ์ ครบทั้ง 5 หมวดหมู่</p>
+                </div>
+
+                <!-- Sort & Filter Controls -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                        <i data-lucide="arrow-down-up" class="w-3.5 h-3.5"></i>
+                        <span>เรียงตาม:</span>
+                    </div>
+                    <select id="sort-select" onchange="applySort(this.value)" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none">
+                        <option value="featured">แนะนำ (Featured)</option>
+                        <option value="rating">คะแนนรีวิวสูงสุด (Top Rated)</option>
+                        <option value="name">ชื่อสถานที่ (ก-ฮ)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div id="category-pills" class="flex flex-wrap gap-2 pt-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <button onclick="filterCategory('all')" data-cat="all" class="cat-pill active px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center gap-1.5">
+                    <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+                    <span>ทั้งหมด (16)</span>
+                </button>
+                <button onclick="filterCategory('nature')" data-cat="nature" class="cat-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center gap-1.5">
+                    <i data-lucide="mountain" class="w-3.5 h-3.5 text-emerald-500"></i>
+                    <span>ภูเขา & ธรรมชาติ</span>
+                </button>
+                <button onclick="filterCategory('beach')" data-cat="beach" class="cat-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center gap-1.5">
+                    <i data-lucide="waves" class="w-3.5 h-3.5 text-sky-500"></i>
+                    <span>ทะเล & เกาะสวรรค์</span>
+                </button>
+                <button onclick="filterCategory('culture')" data-cat="culture" class="cat-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center gap-1.5">
+                    <i data-lucide="landmark" class="w-3.5 h-3.5 text-amber-500"></i>
+                    <span>ประวัติศาสตร์ & วัฒนธรรม</span>
+                </button>
+                <button onclick="filterCategory('city')" data-cat="city" class="cat-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center gap-1.5">
+                    <i data-lucide="coffee" class="w-3.5 h-3.5 text-purple-500"></i>
+                    <span>วิถีเมือง & คาเฟ่</span>
+                </button>
+                <button onclick="filterCategory('adventure')" data-cat="adventure" class="cat-pill px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition border flex items-center gap-1.5">
+                    <i data-lucide="footprints" class="w-3.5 h-3.5 text-orange-500"></i>
+                    <span>แอดเวนเจอร์ & เดินป่า</span>
+                </button>
+            </div>
+
+            <!-- Destinations Cards Grid -->
+            <div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Cards populated by app.js -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+                <i data-lucide="search-x" class="w-12 h-12 text-slate-400 mx-auto mb-3"></i>
+                <h3 class="font-heading text-lg font-semibold text-slate-700 dark:text-slate-200">ไม่พบสถานที่ท่องเที่ยวที่ค้นหา</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">ลองเปลี่ยนคำค้นหา หรือเลือกหมวดหมู่ "ทั้งหมด"</p>
+                <button onclick="resetFilters()" class="mt-4 px-5 py-2.5 bg-sky-600 text-white rounded-xl text-xs font-semibold hover:bg-sky-700 transition">
+                    แสดงสถานที่ทั้งหมด
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. AI Itinerary Generator Section (High-Tech Feature for Teacher) -->
+        <section id="itinerary" class="scroll-mt-24 bg-gradient-to-br from-indigo-950 via-slate-900 to-sky-950 rounded-3xl p-6 sm:p-10 text-white shadow-2xl relative overflow-hidden border border-indigo-900/50">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative max-w-5xl mx-auto space-y-8">
+                <div class="text-center space-y-2">
+                    <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                        AI Travel Itinerary Generator (ระบบจัดทริปอัจฉริยะ)
+                    </span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-extrabold">ให้ AI วางแผนการเดินทางตามใจคุณ</h2>
+                    <p class="text-slate-300 text-sm max-w-xl mx-auto">
+                        เพียงเลือกภูมิภาค จำนวนวัน และสไตล์ที่ชื่นชอบ ระบบ AI จะสร้างตารางการเดินทางแบบรายวัน (Day-by-Day) พร้อมพิกัดกินเที่ยวให้ทันที
+                    </p>
+                </div>
+
+                <!-- Generator Controls -->
+                <div class="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">1. เลือกภูมิภาค</label>
+                        <select id="itin-region" class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="north">ภาคเหนือ (เชียงใหม่ - น่าน - เชียงราย)</option>
+                            <option value="south">ภาคใต้ (กระบี่ - ภูเก็ต - สุราษฎร์ธานี)</option>
+                            <option value="central">ภาคกลาง (อยุธยา - กาญจนบุรี - กทม.)</option>
+                            <option value="northeast">ภาคอีสาน (เลย - นครราชสีมา)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">2. จำนวนวันเที่ยว</label>
+                        <select id="itin-days" class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="1">1 วัน (One Day Trip)</option>
+                            <option value="2">2 วัน 1 คืน (Weekend Gateway)</option>
+                            <option value="3" selected>3 วัน 2 คืน (Full Experience)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1.5">3. สไตล์การเดินทาง</label>
+                        <select id="itin-style" class="w-full bg-slate-800 border border-slate-700 text-white text-xs rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="nature">สายธรรมชาติ & ถ่ายรูป (Scenic & Nature)</option>
+                            <option value="foodie">สายกิน & คาเฟ่ฮอปปิ้ง (Food & Cafe)</option>
+                            <option value="culture">สายมู & วัฒนธรรม (Culture & Temples)</option>
+                            <option value="chill">สายชิลล์ พักผ่อนสบายๆ (Slow Life & Relax)</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end">
+                        <button onclick="generateItinerary()" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-500/25 transition flex items-center justify-center gap-2">
+                            <i data-lucide="wand-2" class="w-4 h-4"></i>
+                            <span>สร้างแผนการเดินทาง</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Itinerary Output Container -->
+                <div id="itin-output" class="bg-slate-900/90 rounded-2xl p-6 border border-white/10 space-y-6">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Trip Budget Calculator Section -->
+        <section id="calculator" class="scroll-mt-24 bg-gradient-to-br from-sky-900 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative max-w-4xl mx-auto space-y-8">
+                <div class="text-center space-y-2">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-medium">
+                        <i data-lucide="calculator" class="w-3.5 h-3.5"></i>
+                        ระบบคำนวณอัจฉริยะ (Interactive Logic)
+                    </span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-bold">ประมาณการงบประมาณท่องเที่ยว</h2>
+                    <p class="text-slate-300 text-sm max-w-xl mx-auto">
+                        คำนวณค่าใช้จ่ายโดยประมาณตามรูปแบบการเที่ยว จำนวนวัน และภูมิภาค เพื่อเตรียมตัวออกเดินทางได้อย่างมั่นใจ
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white/5 backdrop-blur-md p-6 sm:p-8 rounded-2xl border border-white/10">
+                    <!-- Form Controls -->
+                    <div class="lg:col-span-7 space-y-5">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">ภูมิภาคปลายทาง</label>
+                            <select id="calc-region" class="w-full bg-slate-800 border border-slate-700 text-white text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                                <option value="north">ภาคเหนือ (เชียงใหม่, น่าน, เชียงราย)</option>
+                                <option value="south">ภาคใต้ (ภูเก็ต, กระบี่, สุราษฎร์ธานี)</option>
+                                <option value="central">ภาคกลาง / ตะวันออก (อยุธยา, ชลบุรี, กาญจนบุรี)</option>
+                                <option value="northeast">ภาคอีสาน (เลย, ขอนแก่น, นครราชสีมา)</option>
+                            </select>
+                        </div>
+
+                        <!-- Days & Travelers -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">จำนวนวันเดินทาง</label>
+                                <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl px-3 py-2">
+                                    <input id="calc-days" type="number" min="1" max="30" value="3" class="w-full bg-transparent text-white text-sm focus:outline-none font-semibold">
+                                    <span class="text-xs text-slate-400">วัน</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">จำนวนผู้เดินทาง</label>
+                                <div class="flex items-center bg-slate-800 border border-slate-700 rounded-xl px-3 py-2">
+                                    <input id="calc-people" type="number" min="1" max="20" value="2" class="w-full bg-transparent text-white text-sm focus:outline-none font-semibold">
+                                    <span class="text-xs text-slate-400">ท่าน</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Travel Style -->
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">รูปแบบการท่องเที่ยว</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" onclick="setStyle('budget')" data-style="budget" class="calc-style-btn border border-slate-700 bg-slate-800 p-3 rounded-xl text-xs text-center font-medium hover:border-sky-500 transition">
+                                    <span class="block font-bold">สายประหยัด</span>
+                                    <span class="text-[10px] text-slate-400">โฮสเทล / อาหารท้องถิ่น</span>
+                                </button>
+                                <button type="button" onclick="setStyle('standard')" data-style="standard" class="calc-style-btn active border border-sky-500 bg-sky-500/20 p-3 rounded-xl text-xs text-center font-medium transition">
+                                    <span class="block font-bold">สายมาตรฐาน</span>
+                                    <span class="text-[10px] text-sky-200">โรงแรม 3-4 ดาว / คาเฟ่</span>
+                                </button>
+                                <button type="button" onclick="setStyle('luxury')" data-style="luxury" class="calc-style-btn border border-slate-700 bg-slate-800 p-3 rounded-xl text-xs text-center font-medium hover:border-sky-500 transition">
+                                    <span class="block font-bold">สายพรีเมียม</span>
+                                    <span class="text-[10px] text-slate-400">รีสอร์ตหรู / ร้านมิชลิน</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Card -->
+                    <div class="lg:col-span-5 bg-gradient-to-b from-sky-600/30 to-slate-800/80 p-6 rounded-2xl border border-sky-400/20 text-center flex flex-col justify-between h-full space-y-6">
+                        <div>
+                            <span class="text-xs text-sky-300 uppercase tracking-widest font-semibold">งบประมาณแนะนำโดยรวม</span>
+                            <div class="mt-2 text-4xl sm:text-5xl font-heading font-extrabold text-amber-300 flex items-center justify-center gap-1">
+                                <span id="total-budget">฿6,800</span>
+                            </div>
+                            <span class="text-xs text-slate-400 mt-1 block">เฉลี่ยประมาณ <span id="per-person-budget" class="text-white font-medium">฿3,400</span> / ท่าน</span>
+                        </div>
+
+                        <!-- Breakdown -->
+                        <div class="space-y-2.5 text-xs text-slate-300 border-t border-white/10 pt-4 text-left">
+                            <div class="flex justify-between items-center">
+                                <span><i data-lucide="bed" class="w-3.5 h-3.5 inline mr-1 text-sky-400"></i> ค่าที่พักเฉลี่ย:</span>
+                                <span id="hotel-cost" class="font-semibold text-white">฿3,000</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><i data-lucide="utensils" class="w-3.5 h-3.5 inline mr-1 text-amber-400"></i> ค่าอาหารและคาเฟ่:</span>
+                                <span id="food-cost" class="font-semibold text-white">฿2,400</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span><i data-lucide="car" class="w-3.5 h-3.5 inline mr-1 text-emerald-400"></i> ค่าเดินทาง & กิจกรรม:</span>
+                                <span id="transport-cost" class="font-semibold text-white">฿1,400</span>
+                            </div>
+                        </div>
+
+                        <button onclick="printBudgetSummary()" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/20 transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                            <span>บันทึกสรุปงบประมาณ</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Interactive Live Weather Simulation -->
+        <section id="weather" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-semibold text-xs uppercase tracking-wider mb-1">
+                        <i data-lucide="cloud-sun" class="w-4 h-4"></i>
+                        <span>Weather & Climate Insight</span>
+                    </div>
+                    <h2 class="font-heading text-3xl font-extrabold text-slate-900 dark:text-white">
+                        สภาพอากาศและคำแนะนำการแต่งกาย
+                    </h2>
+                </div>
+                <span class="text-xs text-slate-400 font-medium">อัปเดตแบบจำลองสภาวะภูมิอากาศประเทศไทย</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- North Weather -->
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-heading font-bold text-slate-800 dark:text-white">ภาคเหนือ (เชียงใหม่)</span>
+                        <i data-lucide="sun" class="w-6 h-6 text-amber-500"></i>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-bold font-heading text-slate-900 dark:text-white">22°C</span>
+                        <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">อากาศเย็นสบาย</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                        ยอดดอยหนาวจัด แนะนำเตรียมเสื้อกันหนาว หมวกไหมพรม และครีมกันแดดสำหรับเดินป่า
+                    </p>
+                </div>
+
+                <!-- South Weather -->
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-heading font-bold text-slate-800 dark:text-white">ภาคใต้ (กระบี่ - ภูเก็ต)</span>
+                        <i data-lucide="waves" class="w-6 h-6 text-sky-500"></i>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-bold font-heading text-slate-900 dark:text-white">30°C</span>
+                        <span class="text-xs text-sky-600 dark:text-sky-400 font-medium">คลื่นลมสงบ ทะเลใส</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                        แดดดี เหมาะแก่การดำน้ำ ควรพกแว่นกันแดด ซองกันน้ำโทรศัพท์ และครีมกันแดดที่เป็นมิตรต่อปะการัง
+                    </p>
+                </div>
+
+                <!-- Central Weather -->
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-heading font-bold text-slate-800 dark:text-white">ภาคกลาง (กรุงเทพฯ - อยุธยา)</span>
+                        <i data-lucide="cloud-sun" class="w-6 h-6 text-amber-400"></i>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-bold font-heading text-slate-900 dark:text-white">32°C</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">มีเมฆบางส่วน</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                        อากาศค่อนข้างร้อน สวมใส่เสื้อผ้าผ้าฝ้ายโปร่งสบาย ร่มกันแดด และรองเท้าผ้าใบที่เดินสบาย
+                    </p>
+                </div>
+
+                <!-- Northeast Weather -->
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-heading font-bold text-slate-800 dark:text-white">ภาคอีสาน (เลย - เขาใหญ่)</span>
+                        <i data-lucide="wind" class="w-6 h-6 text-teal-500"></i>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-3xl font-bold font-heading text-slate-900 dark:text-white">24°C</span>
+                        <span class="text-xs text-teal-600 dark:text-teal-400 font-medium">ลมพัดโปร่งสบาย</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                        ช่วงเช้ามีสายหมอกตามทิวเขา เหมาะแก่การกางเต็นท์ สวมใส่แจ็กเก็ตกันลมเบาๆ
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Traveler Reviews & Community Section -->
+        <section id="reviews" class="scroll-mt-24 space-y-8">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-semibold text-xs uppercase tracking-wider mb-1">
+                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                        <span>Traveler Community</span>
+                    </div>
+                    <h2 class="font-heading text-3xl font-extrabold text-slate-900 dark:text-white">
+                        รีวิวและความประทับใจจากผู้เดินทาง
+                    </h2>
+                </div>
+                <button onclick="openReviewModal()" class="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold transition flex items-center gap-2 self-start sm:self-auto">
+                    <i data-lucide="pen-line" class="w-4 h-4"></i>
+                    <span>เขียนรีวิวของคุณ</span>
+                </button>
+            </div>
+
+            <!-- Reviews Grid -->
+            <div id="reviews-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Dynamically rendered by app.js -->
+            </div>
+        </section>
+
+        <!-- 6. Culture & Etiquette Section -->
+        <section id="culture" class="scroll-mt-24 space-y-8">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="text-xs font-semibold uppercase text-sky-600 dark:text-sky-400 tracking-wider">Thai Culture & Travel Etiquette</span>
+                <h2 class="font-heading text-3xl font-extrabold text-slate-900 dark:text-white">เกร็ดความรู้และวัฒนธรรมไทย</h2>
+                <p class="text-slate-600 dark:text-slate-400 text-sm">ท่องเที่ยวอย่างเข้าใจ เคารพสถานที่ และสัมผัสมิตรภาพอันอบอุ่นของรอยยิ้มสยาม</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                        <i data-lucide="shirt" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-heading text-lg font-bold text-slate-800 dark:text-white">การแต่งกายเข้าชมศาสนสถาน</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        ควรสวมเสื้อผ้าสุภาพ มีแขน ไม่สวมกางเกงหรือกระโปรงสั้นเหนือเข่า ถอดหมวกและแว่นตาดำ รวมถึงถอดรองเท้าก่อนก้าวข้ามธรณีประตูพระอุโบสถ
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-sky-100 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 flex items-center justify-center">
+                        <i data-lucide="sun" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-heading text-lg font-bold text-slate-800 dark:text-white">ฤดูกาลที่น่าเที่ยวของไทย</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        <strong>ฤดูหนาว (พ.ย. - ก.พ.):</strong> ขึ้นดอยทะเลหมอก ดอกไม้บานสะพรั่ง<br>
+                        <strong>ฤดูร้อน (มี.ค. - พ.ค.):</strong> ท้องฟ้าโปร่ง ดำน้ำดูปะการังอ่าวไทยและอันดามัน<br>
+                        <strong>ฤดูฝน (มิ.ย. - ต.ค.):</strong> ป่าไม้เขียวชอุ่ม นาขั้นบันได และน้ำตกเต็มพลัง
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                        <i data-lucide="heart-handshake" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-heading text-lg font-bold text-slate-800 dark:text-white">การไหว้และรอยยิ้มสยาม</h3>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                        "การไหว้" เป็นวัฒนธรรมการทักทาย ขอบคุณ และขอโทษอย่างมีมารยาท การส่งรอยยิ้มเป็นภาษาสากลที่เชื่อมโยงผู้คนเข้าหากันในทุกชุมชน
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. FAQ Accordion Section -->
+        <section class="max-w-3xl mx-auto space-y-6 w-full">
+            <div class="text-center space-y-2">
+                <span class="text-xs font-semibold uppercase text-sky-600 dark:text-sky-400 tracking-wider">Help & FAQ</span>
+                <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">คำถามที่พบบ่อยในการท่องเที่ยว</h2>
+            </div>
+
+            <div class="space-y-3">
+                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
+                    <button onclick="toggleFaq(1)" class="w-full p-4 text-left font-heading font-semibold text-sm text-slate-800 dark:text-white flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                        <span>จำเป็นต้องจองคิวอุทยานแห่งชาติล่วงหน้าหรือไม่?</span>
+                        <i id="faq-icon-1" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="faq-content-1" class="hidden p-4 pt-0 text-xs text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
+                        สำหรับอุทยานฯ ยอดนิยม เช่น กิ่วแม่ปาน ดอยอินทนนท์ ภูกระดึง และอ่าวมาหยา แนะนำให้จองผ่านแอปพลิเคชัน QueQ ของกรมอุทยานฯ ล่วงหน้า เพื่อความสะดวกและไม่พลาดสิทธิ์การเข้าชมในรอบที่ต้องการ
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
+                    <button onclick="toggleFaq(2)" class="w-full p-4 text-left font-heading font-semibold text-sm text-slate-800 dark:text-white flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                        <span>ระบบคำนวณงบประมาณคิดค่าใช้จ่ายจากอะไรบ้าง?</span>
+                        <i id="faq-icon-2" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="faq-content-2" class="hidden p-4 pt-0 text-xs text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
+                        ระบบใช้สูตรการคำนวณแบบ Dynamic Algorithm โดยอ้างอิงจากฐานข้อมูลราคาจริงของแต่ละภูมิภาค (เช่น ภาคใต้เกาะจะมีค่าเรือและที่พักสูงกว่าภาคอื่นเล็กน้อย) คูณด้วยจำนวนวัน จำนวนคน และระดับความสะดวกสบายที่คุณเลือก
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
+                    <button onclick="toggleFaq(3)" class="w-full p-4 text-left font-heading font-semibold text-sm text-slate-800 dark:text-white flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition">
+                        <span>ทัวร์ดำน้ำเกาะเต่าและกระบี่ควรเตรียมตัวอย่างไร?</span>
+                        <i id="faq-icon-3" data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform"></i>
+                    </button>
+                    <div id="faq-content-3" class="hidden p-4 pt-0 text-xs text-slate-500 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800">
+                        ควรเตรียมชุดว่ายน้ำ ยาแก้เมาเรือรับประทานก่อนลงเรือ 30 นาที และที่สำคัญที่สุดคือใช้ครีมกันแดดชนิด Reef-Safe ที่ปราศจากสารเคมีทำลายปะการัง (เช่น Oxybenzone)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. AI Project Academic Defense Section -->
+        <section id="ai-concept" class="scroll-mt-24 bg-gradient-to-tr from-slate-100 to-sky-50 dark:from-slate-900 dark:to-slate-850 border border-sky-100 dark:border-slate-800 rounded-3xl p-8 sm:p-12 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-sky-200/60 dark:border-slate-800 pb-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-sky-700 dark:text-sky-400 font-semibold text-xs uppercase tracking-wider mb-2">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                        <span>AI Project Documentation for Instructors</span>
+                    </div>
+                    <h2 class="font-heading text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+                        เบื้องหลังการพัฒนาด้วย AI (สำหรับใช้นำเสนออาจารย์)
+                    </h2>
+                </div>
+                <div class="bg-white dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm text-xs font-semibold text-slate-600 dark:text-slate-300 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>100% AI Code Assisted</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                    <div class="font-heading font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                        <span class="w-6 h-6 rounded-lg bg-sky-600 text-white flex items-center justify-center text-xs">1</span>
+                        <span>Prompt Engineering</span>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                        การเขียนชุดคำสั่ง (System Prompting) เพื่อกำหนดขอบเขตเว็บไซต์ หน้าจอ UX/UI ที่ทันสมัย รองรับ Dark Mode และการจัดโครงสร้างแบบ SPA (Single Page Application)
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                    <div class="font-heading font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                        <span class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs">2</span>
+                        <span>Interactive Algorithms</span>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                        การให้ AI ช่วยสังเคราะห์ Logic คำนวณงบประมาณ, ระบบจำลองแผนการเดินทาง AI Itinerary Generator และการจัดการ LocalStorage สำหรับ Wishlist & Review
+                    </p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm">
+                    <div class="font-heading font-bold text-slate-800 dark:text-white flex items-center gap-2 mb-2">
+                        <span class="w-6 h-6 rounded-lg bg-amber-600 text-white flex items-center justify-center text-xs">3</span>
+                        <span>Data Modeling</span>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                        การจัดเตรียมข้อมูล JSON สถานที่ท่องเที่ยว 16 พิกัด พร้อมภาพถ่าย พิกัดจังหวัด ฤดูกาลท่องเที่ยว และจุดเด่น เพื่อนำมารัน Render แบบ Dynamic
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-sky-900 dark:bg-slate-800 text-white p-6 rounded-2xl space-y-3 border border-sky-800 dark:border-slate-700">
+                <div class="flex items-center gap-2 text-amber-300 font-bold text-sm">
+                    <i data-lucide="lightbulb" class="w-4 h-4"></i>
+                    <span>บทพูดสรุปผลงานที่แนะนำให้อธิบายอาจารย์:</span>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                    "โปรเจกต์ TravelThai นี้ ผมได้ใช้ Generative AI ในฐานะ <strong>AI Pair Programmer</strong> ช่วยในการออกแบบสถาปัตยกรรมเว็บไซต์ และเขียนฟังก์ชันเชิงโต้ตอบ (Interactive Features) ครบถ้วน ไม่ว่าจะเป็นระบบจัดแผนเที่ยวตามเงื่อนไข (Rule-based AI Itinerary), ระบบประเมินงบประมาณ, ระบบค้นหาข้อมูลแบบเรียลไทม์ และระบบจัดเก็บข้อมูลลง LocalStorage ซึ่งแสดงให้เห็นถึงการนำ AI มาต่อยอดเป็นเว็บแอปพลิเคชันที่ใช้งานได้จริง ไม่ใช่เพียงแค่หน้าเว็บแสดงผลทั่วไปครับ"
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Destination Detail Modal -->
+    <div id="detail-modal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl animate-fade-in relative max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-800">
+            <button onclick="closeModal()" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 text-white hover:bg-black/80 flex items-center justify-center transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="h-64 sm:h-72 w-full relative overflow-hidden bg-slate-100 flex-shrink-0">
+                <img id="modal-img" src="" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                <div class="absolute bottom-4 left-6 right-6 text-white">
+                    <span id="modal-tag" class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-500/90 backdrop-blur mb-2 inline-block"></span>
+                    <h3 id="modal-title" class="font-heading text-2xl sm:text-3xl font-bold"></h3>
+                    <p id="modal-province" class="text-xs sm:text-sm text-slate-300 flex items-center gap-1 mt-1"></p>
+                </div>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4">
+                <div>
+                    <h4 class="font-heading font-bold text-slate-800 dark:text-white text-sm mb-1">เกี่ยวกับสถานที่นี้</h4>
+                    <p id="modal-desc" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 text-xs">
+                    <div>
+                        <span class="block text-slate-400 font-medium">ช่วงเวลาที่แนะนำ</span>
+                        <span id="modal-season" class="font-semibold text-slate-700 dark:text-slate-200"></span>
+                    </div>
+                    <div>
+                        <span class="block text-slate-400 font-medium">คะแนนความนิยม</span>
+                        <span id="modal-rating" class="font-semibold text-amber-500 flex items-center gap-1"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-heading font-bold text-slate-800 dark:text-white text-sm mb-1">ไฮไลต์ที่ไม่ควรพลาด</h4>
+                    <p id="modal-highlight" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 text-xs font-semibold transition">
+                    ปิดหน้าต่าง
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Favorites Modal -->
+    <div id="favorites-modal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+            <button onclick="closeFavoritesModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-2">
+                <i data-lucide="heart" class="w-5 h-5 text-rose-500 fill-rose-500"></i>
+                <h3 class="font-heading text-xl font-bold text-slate-800 dark:text-white">สถานที่ที่คุณบันทึกไว้</h3>
+            </div>
+            <div id="favorites-list" class="space-y-3 max-h-72 overflow-y-auto pr-1"></div>
+            <div class="border-t border-slate-100 dark:border-slate-800 pt-3 flex justify-between items-center text-xs text-slate-500">
+                <span>บันทึกอัตโนมัติในเบราว์เซอร์</span>
+                <button onclick="closeFavoritesModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl font-medium">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contact-modal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+            <button onclick="closeContactModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="space-y-1">
+                <h3 class="font-heading text-xl font-bold text-slate-800 dark:text-white">ติดต่อทีมงาน TravelThai</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">ส่งข้อความสอบถามหรือข้อเสนอแนะเพิ่มเติม</p>
+            </div>
+            <form id="contact-form" onsubmit="handleContactSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">ชื่อ-นามสกุล</label>
+                    <input type="text" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">อีเมล</label>
+                    <input type="email" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">ข้อความ</label>
+                    <textarea rows="3" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-semibold shadow-md transition">
+                    ส่งข้อความ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative border border-slate-200 dark:border-slate-800">
+            <button onclick="closeReviewModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="space-y-1">
+                <h3 class="font-heading text-xl font-bold text-slate-800 dark:text-white">เขียนรีวิวการท่องเที่ยว</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">แบ่งปันประสบการณ์เพื่อเป็นประโยชน์แก่นักเดินทางท่านอื่น</p>
+            </div>
+            <form id="review-form" onsubmit="handleReviewSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">ชื่อของคุณ</label>
+                    <input id="rev-name" type="text" required placeholder="เช่น น้องพลอย สายเที่ยว" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">สถานที่ที่ไปเยือน</label>
+                    <input id="rev-place" type="text" required placeholder="เช่น ดอยอินทนนท์ หรือ อ่าวมาหยา" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">ให้คะแนนความประทับใจ</label>
+                    <select id="rev-rating" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        <option value="5">⭐⭐⭐⭐⭐ (5 ดาว - ยอดเยี่ยมมาก)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 ดาว - ดีมาก)</option>
+                        <option value="3">⭐⭐⭐ (3 ดาว - พอใช้)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 dark:text-slate-300 mb-1">ข้อความรีวิว</label>
+                    <textarea id="rev-comment" rows="3" required placeholder="บรรยายความสวยงาม บรรยากาศ หรือข้อแนะนำ..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-2.5 text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-semibold shadow-md transition">
+                    โพสต์รีวิวทันที
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back to Top Floating Button -->
+    <button id="back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-6 left-6 z-40 p-3 rounded-2xl bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-lg hover:shadow-xl hover:scale-105 transition-all opacity-0 pointer-events-none">
+        <i data-lucide="arrow-up" class="w-5 h-5"></i>
+    </button>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold font-heading">
+                        TT
+                    </div>
+                    <div>
+                        <span class="font-heading font-bold text-white text-base">TravelThai AI Project</span>
+                        <p class="text-[11px] text-slate-500">โครงงานส่งเสริมการท่องเที่ยวไทย พัฒนาด้วยปัญญาประดิษฐ์</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6 text-slate-400">
+                    <a href="#destinations" class="hover:text-white transition">สถานที่</a>
+                    <a href="#itinerary" class="hover:text-white transition">แผนเที่ยว</a>
+                    <a href="#calculator" class="hover:text-white transition">คำนวณงบ</a>
+                    <a href="#culture" class="hover:text-white transition">วัฒนธรรม</a>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+                <p>© 2026 TravelThai. พัฒนาขึ้นเพื่อวัตถุประสงค์ทางการศึกษาและการเรียนรู้เทคโนโลยี AI</p>
+                <p>Designed with Semantic HTML5, Tailwind CSS & Modern Vanilla JavaScript</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
